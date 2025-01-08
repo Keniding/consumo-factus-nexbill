@@ -1,6 +1,9 @@
+'use client'
+
 import { BarChart3, FileText, Settings, ArrowRight } from 'lucide-react'
 import { ElegantCard } from '@/src/app/components/ui/ElegantCard'
 import { ElegantButton } from '@/src/app/components/ui/ElegantButton'
+import { useRouter } from "next/navigation"
 
 const features = [
   {
@@ -21,10 +24,21 @@ const features = [
 ]
 
 export default function HomePage() {
+  const router = useRouter()
+
+  const handleStartTrial = () => {
+    router.push('/login')
+  }
+
+  const handleScheduleDemo = () => {
+    router.push('/contact')
+  }
+
   return (
       <div className="min-h-screen bg-brand-surface overflow-hidden">
         <div className="fixed inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/5 via-transparent to-brand-accent/5 animate-pulse-soft" />
+          <div
+              className="absolute inset-0 bg-gradient-to-br from-brand-primary/5 via-transparent to-brand-accent/5 animate-pulse-soft"/>
         </div>
 
         <div className="container mx-auto px-4 py-16">
@@ -53,7 +67,8 @@ export default function HomePage() {
                     <div className="flex flex-col items-center text-center group h-full">
                       {/* Contenedor superior para el ícono */}
                       <div className="mb-4">
-                        <div className="p-3 bg-gradient-to-br from-brand-primary/10 to-brand-accent/10 rounded-full transform transition-transform group-hover:scale-110">
+                        <div
+                            className="p-3 bg-gradient-to-br from-brand-primary/10 to-brand-accent/10 rounded-full transform transition-transform group-hover:scale-110">
                           {feature.icon}
                         </div>
                       </div>
@@ -78,21 +93,24 @@ export default function HomePage() {
                 variant="primary"
                 size="lg"
                 className="group"
+                onClick={handleStartTrial}
             >
-            <span className="flex items-center">
-              Comenzar Prueba Gratuita
-              <ArrowRight className="ml-2 transform transition-transform group-hover:translate-x-1" />
-            </span>
+          <span className="flex items-center">
+            Comenzar Prueba Gratuita
+            <ArrowRight className="ml-2 transform transition-transform group-hover:translate-x-1"/>
+          </span>
             </ElegantButton>
+
             <ElegantButton
                 variant="outline"
                 size="lg"
                 className="group"
+                onClick={handleScheduleDemo}
             >
-            <span className="flex items-center">
-              Agendar Demo
-              <span className="ml-2 animate-wave">👋</span>
-            </span>
+          <span className="flex items-center">
+            Agendar Demo
+            <span className="ml-2 animate-wave">👋</span>
+          </span>
             </ElegantButton>
           </div>
         </div>

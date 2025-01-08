@@ -1,11 +1,11 @@
-
-import React from 'react'
-
 interface ElegantButtonProps {
     children: React.ReactNode
     variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
     size?: 'sm' | 'md' | 'lg'
     className?: string
+    type?: 'button' | 'submit' | 'reset'
+    disabled?: boolean
+    onClick?: () => void
 }
 
 export function ElegantButton({
@@ -13,6 +13,9 @@ export function ElegantButton({
                                   variant = 'primary',
                                   size = 'md',
                                   className = '',
+                                  type = 'button',
+                                  disabled = false,
+                                  onClick,
                               }: ElegantButtonProps) {
     const baseStyles = "relative font-medium rounded-lg transition-all duration-300 overflow-hidden transform hover:-translate-y-0.5 active:translate-y-0"
 
@@ -29,10 +32,23 @@ export function ElegantButton({
         lg: "px-6 py-2.5 text-lg"
     }
 
+    // Añadimos estilos para el estado disabled
+    const disabledStyles = disabled
+        ? "opacity-50 cursor-not-allowed hover:transform-none"
+        : ""
+
     return (
         <button
-            className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
-            type="button"
+            className={`
+                ${baseStyles} 
+                ${variants[variant]} 
+                ${sizes[size]} 
+                ${disabledStyles}
+                ${className}
+            `}
+            type={type}
+            disabled={disabled}
+            onClick={onClick}
         >
             {children}
         </button>
