@@ -10,23 +10,36 @@ interface AuthState {
     user: User | null
     login: (credentials: LoginCredentials) => Promise<void>
     logout: () => void
+    isAuthenticated: () => boolean
 }
 
-const createAuthStore: StateCreator<AuthState> = (set) => ({
+const createAuthStore: StateCreator<AuthState> = (set, get) => ({
     token: null,
     refreshToken: null,
     expiresIn: null,
     user: null,
-    login: async (credentials) => {
-        const response = await factusApi.auth.login(credentials)
-        set({
-            token: response.access_token,
-            refreshToken: response.refresh_token,
-            expiresIn: response.expires_in,
-            user: null
-        })
+    isAuthenticated: () => {
+        const state = get()
+        if (!state.token || !state.expiresIn) return false
 
-        localStorage.setItem('token', response.access_token)
+        return Date.now() < (state.expiresIn * 1000) - 5000
+    },
+    login: async (credentials) => {
+        try {
+            const response = await factusApi.auth.login(credentials)
+
+            const expiresIn = Math.floor(Date.now() / 1000) + response.expires_in
+
+            set({
+                token: response.access_token,
+                refreshToken: response.refresh_token,
+                expiresIn: expiresIn,
+                user: response.user || null
+            })
+        } catch (error) {
+            get().logout()
+            throw error
+        }
     },
     logout: () => {
         set({
@@ -35,7 +48,7 @@ const createAuthStore: StateCreator<AuthState> = (set) => ({
             expiresIn: null,
             user: null
         })
-        localStorage.removeItem('token')
+
         localStorage.removeItem('auth-storage')
     }
 })
@@ -48,6 +61,15 @@ export const useAuthStore = create<AuthState>()(
             refreshToken: state.refreshToken,
             expiresIn: state.expiresIn,
             user: state.user
-        })
+        }),
+        version: 1,
+        onRehydrateStorage: () => (state) => {
+            if (state && state.expiresIn && Date.now() >= state.expiresIn * 1000) {
+                // Si el token ha expirado, limpiamos el estado
+                state.logout()
+            }
+        }
     }) as StateCreator<AuthState>
 )
+
+export const selectIsAuthenticated = (state: AuthState) => state.isAuthenticated()

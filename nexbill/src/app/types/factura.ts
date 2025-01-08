@@ -42,3 +42,29 @@ export interface FacturaInput {
         }>
     }>
 }
+
+export interface Factura {
+    id: number;
+    number: string;
+    api_client_name: string;
+    reference_code: string | null;
+    identification: string;
+    graphic_representation_name: string;
+    company: string;
+    trade_name: string;
+    names: string;
+    email: string;
+    total: string;
+    status: number;
+    errors: any[];
+    send_email: number;
+    has_claim: number;
+    is_negotiable_instrument: number;
+    payment_form: {
+        code: string;
+        name: string;
+    };
+    created_at: string | null;
+    credit_notes: any[];
+    debit_notes: any[];
+}
